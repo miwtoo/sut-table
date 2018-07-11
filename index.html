@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SUT Table</title>
+    <link rel="stylesheet" href="css/timetablejs.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    
+
+</head>
+<body>
+    <div id="app"></div>
+    <div class="timetable"></div>
+
+    <script src="js/timetable.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        var timetable = new Timetable();
+        timetable.setScope(8, 20); // optional, only whole hours between 0 and 23
+        timetable.addLocations(['Monday', 'Tuesday', 'Wednesday', 'Thurday','Friday']);
+
+        timetable.addEvent('ENGLISH FOR CAREERS','Monday',new Date(2018, 11, 24, 10, 00),new Date(2018, 11, 24, 12, 00))
+      
+        var renderer = new Timetable.Renderer(timetable);
+        renderer.draw('.timetable');
+    </script>
+    
+</body>
+</html>
