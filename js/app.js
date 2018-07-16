@@ -93,7 +93,7 @@ var app = new Vue({
         getCourse: function(){
             
             this.btnClass = "button is-primary is-loading"
-            var url = 'http://allorigins.me/get?&url=' + encodeURIComponent('http://reg6.sut.ac.th/registrar/class_info_1.asp?coursestatus=reg&facultyid=all&maxrow=1000&Acadyear='+this.year+'&Semester='+this.term+'&CAMPUSID=1&LEVELID=1&coursecode='+this.coursecode+'&coursename=&cmd=2') + '&callback=?'
+            var url = 'https://allorigins.me/get?&url=' + encodeURIComponent('http://reg6.sut.ac.th/registrar/class_info_1.asp?coursestatus=reg&facultyid=all&maxrow=1000&Acadyear='+this.year+'&Semester='+this.term+'&CAMPUSID=1&LEVELID=1&coursecode='+this.coursecode+'&coursename=&cmd=2') + '&callback=?'
             //var url = 'http://allorigins.me/get?url=' + encodeURIComponent('http://reg6.sut.ac.th/registrar/class_info_2.asp?backto=home&option=0&courseid='+this.courseid+'&coursecode='+this.coursecode+'&acadyear='+this.year+'&semester='+this.term+'&avs250426955=5') + '&callback=?'
             //console.log(url);
             $.ajax({ 
