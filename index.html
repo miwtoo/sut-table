@@ -1,63 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>SUT Table</title>
-    
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="js/bulma-quickview.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
     <link rel="stylesheet" href="css/timetablejs.css">
     <link rel="stylesheet" href="css/bulma-quickview.min.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script type="text/javascript" src="js/bulma-quickview.min.js"></script>
-
-    
-
 </head>
-<body>
-    <div id="quickviewDefault" class="quickview">
-        <header class="quickview-header">
-            <p class="title">เพิ่มรายวิชา</p>
-            <span class="delete" data-dismiss="quickview"></span>
-        </header>
-        
-        <div class="quickview-body">
-            <div class="quickview-block">
-                    ปีการศึกษา : <input type="text" size="4" value="2561">
-                    เทอม : 
-                    <select>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                    </select><br>
-                รหัสวิชา : <input type="text" size="5">
-                กลุ่ม : <input type="text" size="2">
-            </div>
-        </div>
-        
-        <footer class="quickview-footer">
-        
-        </footer>
-    </div>
-    <button class="button is-primary" data-show="quickview" data-target="quickviewDefault">Show quickview</button>
-    <div id="app"></div>
-    <div class="timetable"></div>
 
+<body>
+    <div id="app">
+        <div id="quickviewDefault" class="quickview">
+            <header class="quickview-header">
+                <p class="title">เพิ่มรายวิชา</p>
+                <span class="delete" data-dismiss="quickview"></span>
+            </header>
+
+            <div class="quickview-body">
+                <div class="quickview-block">
+                    <div class="field is-horizontal">
+                        <div class="field-body">
+                            <div class="field has-addons">
+                                <p class="control">
+                                    <input type="number" class="input" placeholder="ปีการศึกษา" v-model="year">
+                                </p>
+                                <p class="control">
+                                    <span class="select">
+                                        <select v-model="term">
+                                            <option value=1>1</option>
+                                            <option value=2>2</option>
+                                            <option value=3>3</option>
+                                        </select>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="field has-addons">
+                                <div class="control">
+                                    <input type="number" class="input" placeholder="รหัสวิชา" v-model="coursecode">
+                                </div>
+                                <p class="control">
+                                    <a class="button is-primary" v-bind:class="btnClass" @click="getCourse">
+                                        ค้นหา
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="list-course">
+                        <ul>
+                            ทั้งหมด {{group.length}} กลุ่ม <br>
+                            รหัสวิชา : {{info.id}} <br>
+                            หน่วยกิต : {{info.credit}} <br>
+                            ชื่อวิชา : {{info.name}} <br>
+                            <li v-for="i in group">
+                                    
+                                <div class="box">
+                                    กลุ่ม : {{i.number}} <br>
+                                    <ul>
+                                        เวลา : 
+                                        <div v-for="j in i.times">
+                                            {{ j.day }} {{j.time}} {{j.room}}
+                                        </div>
+                                    </ul>
+                                    <a class="button is-success" @click="addClass(i.number)">Add</a>
+                                </div>
+                            </li>
+                            <br>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="quickview-footer">
+
+            </footer>
+        </div>
+        <button class="button is-primary" data-show="quickview" data-target="quickviewDefault">เพิ่มรายวิชา</button>
+        <div class="columns">
+            <div class="column"></div>
+            <div class="column is-three-quarters">
+                <div class="timetable"></div>
+            </div>
+            <div class="column"></div>
+        </div>
+        <div >{{ sumCredit }}</div>
+        <div class="tag is-success">
+            Hello
+            <button class="delete is-small"></button>
+        </div>
+    </div>
     <script src="js/timetable.js"></script>
     <script src="js/app.js"></script>
     <script>
         var quickviews = bulmaQuickview.attach();
-        var timetable = new Timetable();
-        timetable.setScope(8, 20); // optional, only whole hours between 0 and 23
-        timetable.addLocations(['Monday', 'Tuesday', 'Wednesday', 'Thurday','Friday']);
-
-        timetable.addEvent('ENGLISH FOR CAREERS','Monday',new Date(2018, 11, 24, 10, 00),new Date(2018, 11, 24, 12, 00))
-      
-        var renderer = new Timetable.Renderer(timetable);
-        renderer.draw('.timetable');
+        //var timetable = new Timetable();
+        
     </script>
-    
+
 </body>
+
 </html>
