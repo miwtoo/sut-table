@@ -42,7 +42,7 @@
                                 <input type="text" placeholder="2561" class="validate" size="6" v-model="year">
                                 <label>ปีการศึกษา</label>
                             </div>
-                            <div class="input-field col s3">
+                            <div class="input-field col s2">
                                 <select  id='myselect'>
                                     <option value='1'>1</option>
                                     <option value='2'>2</option>
@@ -50,12 +50,12 @@
                                 </select>
                                 <label>เทอม</label>
                             </div>
-                            <div class="input-field col s3">
-                                <input type="text" placeholder="102101" class="validate" size="5" v-model="coursecode">
+                            <div class="input-field col s4">
+                                <input type="text" placeholder="102101" class="validate" v-model="coursecode">
                                 <label>รหัสวิชา</label>
                             </div>
                             <div class="col s2">
-                                <a class="waves-effect waves-light btn" @click="getCourse"><i class="material-icons">search</i></a>
+                                <a class="waves-effect waves-light btn-small" @click="getCourse"><i class="small material-icons">search</i></a>
                             </div>
                         </div>
                     </form>
@@ -87,14 +87,14 @@
         </div>
 
     <div class="row">
-        <div class="col s2"></div>
-        <div class="col s8">
+        <div class="col l2"></div>
+        <div class="col l8 s12">
             <div class="timetable"></div>
         </div>
-        <div class="col s2"></div>
+        <div class="col l2"></div>
     </div>
     <div class="row">
-        <h5 class="col s3 offset-s9">หน่วยกิตรวม : {{ sumCredit }}</h5>
+        <h5 class="col l3  offset-l9">หน่วยกิตรวม : {{ sumCredit }}</h5>
     </div>
     
     <div class="fixed-action-btn">
@@ -116,7 +116,6 @@
     <script src="js/timetable.js"></script>
     <script src="js/app.js"></script>
     <script>
-        var quickviews = bulmaQuickview.attach();
         //var timetable = new Timetable();
 
     </script>
