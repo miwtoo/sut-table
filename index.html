@@ -8,63 +8,68 @@
     <title>SUT Table</title>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script type="text/javascript" src="js/bulma-quickview.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <link rel="stylesheet" href="css/timetablejs.css">
-    <link rel="stylesheet" href="css/bulma-quickview.min.css">
 
 </head>
 
 <body>
     <div id="app">
-        <div id="quickviewDefault" class="quickview">
-            <header class="quickview-header">
-                <p class="title">เพิ่มรายวิชา</p>
-                <span class="delete" data-dismiss="quickview"></span>
-            </header>
-
-            <div class="quickview-body">
-                <div class="quickview-block">
-                    <div class="field is-horizontal">
-                        <div class="field-body">
-                            <div class="field has-addons">
-                                <p class="control">
-                                    <input type="number" class="input" placeholder="ปีการศึกษา" v-model="year">
-                                </p>
-                                <p class="control">
-                                    <span class="select">
-                                        <select v-model="term">
-                                            <option value=1>1</option>
-                                            <option value=2>2</option>
-                                            <option value=3>3</option>
-                                        </select>
-                                    </span>
-                                </p>
+        <div class="navbar-fixed ">
+            <nav class="light-blue">
+                <div class="nav-wapper ">
+                    <a href="#" class="brand-logo center">SUT-TABLE</a>
+                    <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                </div>
+            </nav>
+        </div>
+        
+        
+        <div id="modal1" class="modal">
+            <div v-bind:class="btnClass">
+                <div class="indeterminate"></div>
+            </div>
+            <div class="modal-content">
+                <h4>เพิ่มรายวิชา</h4>
+                <div class="row">
+                    <form class="col s12">
+                        <div class="row">
+                            <div class="input-field col s4">
+                                <input type="text" placeholder="2561" class="validate" size="6" v-model="year">
+                                <label>ปีการศึกษา</label>
                             </div>
-                            <div class="field has-addons">
-                                <div class="control">
-                                    <input type="number" class="input" placeholder="รหัสวิชา" v-model="coursecode">
-                                </div>
-                                <p class="control">
-                                    <a class="button is-primary" v-bind:class="btnClass" @click="getCourse">
-                                        ค้นหา
-                                    </a>
-                                </p>
+                            <div class="input-field col s3">
+                                <select  id='myselect'>
+                                    <option value='1'>1</option>
+                                    <option value='2'>2</option>
+                                    <option value='3'>3</option>
+                                </select>
+                                <label>เทอม</label>
+                            </div>
+                            <div class="input-field col s3">
+                                <input type="text" placeholder="102101" class="validate" size="5" v-model="coursecode">
+                                <label>รหัสวิชา</label>
+                            </div>
+                            <div class="col s2">
+                                <a class="waves-effect waves-light btn" @click="getCourse"><i class="material-icons">search</i></a>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="list-course">
-                        <ul>
+                    </form>
+
+                </div>
+                <div class="row">
+                    <div class="row s12">
                             ทั้งหมด {{group.length}} กลุ่ม <br>
                             รหัสวิชา : {{info.id}} <br>
                             หน่วยกิต : {{info.credit}} <br>
                             ชื่อวิชา : {{info.name}} <br>
-                            <li v-for="i in group">
-                                    
-                                <div class="box">
+                        <ul class="collection">
+                            
+                            <li class="collection-item" v-for="i in group">
                                     กลุ่ม : {{i.number}} <br>
                                     <ul>
                                         เวลา : 
@@ -72,39 +77,48 @@
                                             {{ j.day }} {{j.time}} {{j.room}}
                                         </div>
                                     </ul>
-                                    <a class="button is-success" @click="addClass(i.number)">Add</a>
-                                </div>
+                                    <a class="waves-effect waves-light btn" @click="addClass(i.number)">Add</a>
                             </li>
                             <br>
                         </ul>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <footer class="quickview-footer">
+    <div class="row">
+        <div class="col s2"></div>
+        <div class="col s8">
+            <div class="timetable"></div>
+        </div>
+        <div class="col s2"></div>
+    </div>
+    <div class="row">
+        <h5 class="col s3 offset-s9">หน่วยกิตรวม : {{ sumCredit }}</h5>
+    </div>
+    
+    <div class="fixed-action-btn">
+        <a id='add' class="waves-effect waves-light btn-floating btn-large red modal-trigger"  href="#modal1">
+            <i class="large material-icons">add</i>
+        </a>
+    </div>
 
-            </footer>
+
+    <div class="tap-target" data-activates="add">
+        <div class="tap-target-content">
+        <h5>เพิ่มรายวิชา</h5>
+        <p>คุณสามารถเพิ่มวิชาได้ที่นี้</p>
         </div>
-        <button class="button is-primary" data-show="quickview" data-target="quickviewDefault">เพิ่มรายวิชา</button>
-        <div class="columns">
-            <div class="column"></div>
-            <div class="column is-three-quarters">
-                <div class="timetable"></div>
-            </div>
-            <div class="column"></div>
-        </div>
-        <div >{{ sumCredit }}</div>
-        <div class="tag is-success">
-            Hello
-            <button class="delete is-small"></button>
-        </div>
+    </div>
+            
+        
     </div>
     <script src="js/timetable.js"></script>
     <script src="js/app.js"></script>
     <script>
         var quickviews = bulmaQuickview.attach();
         //var timetable = new Timetable();
-        
+
     </script>
 
 </body>

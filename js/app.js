@@ -3,18 +3,19 @@ var app = new Vue({
     data: {
         coursecode: 213101,
         year : 2561,
-        term : 1,
+        term : 2,
         group: [],
         info: {
             id: null,
             name: null ,
             credit: null,
         },
-        btnClass : "button is-primary",
+        btnClass : "",
         firstTime : 8,
         lastTime: 17,
         sumCredit:0,
-        timetable : null
+        timetable : null,
+        toastTime : 2000
     },
     created() {
         this.timetable = new Timetable()
@@ -24,10 +25,17 @@ var app = new Vue({
         var renderer = new Timetable.Renderer(this.timetable);
         renderer.draw('.timetable');
         console.log(this.timetable);
+
+        $(document).ready(function(){
+            $('.modal').modal();
+            $('.tap-target').tapTarget('open');
+            $('select').material_select();
+        });
         
     },
     methods: {
         addClass : function(n){
+            
             var that = this
             var check = false
             n--
@@ -48,7 +56,6 @@ var app = new Vue({
                 //console.log(checkTime(startTime,endTime, day[this.group[n].times[i].day]));
                 
                 if(checkTime(startTime,endTime, day[this.group[n].times[i].day]) && checkEventNameDuplicate(this.group[n].id.split("-")[0] +'- '+ this.group[n].number)){
-                    console.log('เพิ่มสำเร็จ');
                     this.timetable.setScope(this.firstTime, this.lastTime);
                     this.timetable.addEvent(this.group[n].id.split("-")[0] +'- '+ this.group[n].number, day[this.group[n].times[i].day], new Date(2018, 1, 1, startTime[0], startTime[1]), new Date(2018, 1, 1, endTime[0], endTime[1]));    
 
@@ -56,11 +63,14 @@ var app = new Vue({
                     //this.sumCredit += parseInt(this.info.credit.split(" ")[0])
                     console.log(this.timetable);
                 }
-                else
-                    console.log('ไม่สามารถเพิ่มได้');
+                //else
+                    //Materialize.toast('ไม่สามารถเพิ่มได้',this.toastTime)
                 
             }
-            if(check) this.sumCredit += parseInt(this.info.credit.split(" ")[0])
+            if(check) {
+                this.sumCredit += parseInt(this.info.credit.split(" ")[0])
+                Materialize.toast('เพิ่มสำเร็จ',this.toastTime)
+            }
             
             var renderer = new Timetable.Renderer(this.timetable);
             renderer.draw('.timetable');
@@ -73,7 +83,7 @@ var app = new Vue({
                     b = parseFloat(that.timetable.events[i].endDate.getHours()+'.'+that.timetable.events[i].endDate.getMinutes())
                     if(that.timetable.events[i].location == loca){ //ถ้าเป็นวันเดียวกันค่อยเข้ามาเช็ค
                         if((x >= a && x <= b) || (y >= a && x <= y)){
-                            console.log("วันและเวลาซ้ำซ้อน");
+                            Materialize.toast('ไม่สามารถเพิ่มได้ เนื่องจาก' + 'วันและเวลาซ้ำซ้อน',that.toastTime)
                             return false
                         }
                     }
@@ -83,16 +93,19 @@ var app = new Vue({
             function checkEventNameDuplicate(name) {
                 for (let i = 0; i < that.timetable.events.length; i++) {
                     if(name != that.timetable.events[i].name){
-                        console.log('รหัสวิชาซ้ำ');
+                        Materialize.toast('ไม่สามารถเพิ่มได้ เนื่องจาก'+ 'รหัสวิชาซ้ำ',that.toastTime)
                         return false
                     }
                 }
                 return true
             }
         },
+        updateTerm: function(){
+            this.term = $('#myselect').val()
+        },
         getCourse: function(){
-            
-            this.btnClass = "button is-primary is-loading"
+            this.updateTerm()
+            this.btnClass = "progress"
             var url = 'https://allorigins.me/get?&url=' + encodeURIComponent('http://reg6.sut.ac.th/registrar/class_info_1.asp?coursestatus=reg&facultyid=all&maxrow=1000&Acadyear='+this.year+'&Semester='+this.term+'&CAMPUSID=1&LEVELID=1&coursecode='+this.coursecode+'&coursename=&cmd=2') + '&callback=?'
             //var url = 'http://allorigins.me/get?url=' + encodeURIComponent('http://reg6.sut.ac.th/registrar/class_info_2.asp?backto=home&option=0&courseid='+this.courseid+'&coursecode='+this.coursecode+'&acadyear='+this.year+'&semester='+this.term+'&avs250426955=5') + '&callback=?'
             //console.log(url);
@@ -132,6 +145,12 @@ var app = new Vue({
                     this.btnClass = "button is-primary"
                 }.bind(this)
             });
+        },
+        modalsBtn: function(){
+
         }
+    },
+    computed: {
+        
     }
 })
