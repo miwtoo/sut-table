@@ -18,6 +18,8 @@ var app = new Vue({
         toastTime : 2000
     },
     created() {
+        
+
         this.timetable = new Timetable()
         this.timetable.setScope(8, 17); // optional, only whole hours between 0 and 23
         this.timetable.addLocations(['Monday', 'Tuesday', 'Wednesday', 'Thurday', 'Friday']);
@@ -32,13 +34,15 @@ var app = new Vue({
             $('select').material_select();
         });
         
+        
     },
     methods: {
         addClass : function(n){
-            
+            n--
             var that = this
             var check = false
-            n--
+            var color = this.randomColor()
+            
             var day = {
                 "Mo":"Monday","Tu":"Tuesday","We":"Wednesday","Th":"Thurday","Fr":"Friday"
             }
@@ -54,10 +58,17 @@ var app = new Vue({
                     this.lastTime = parseInt(endTime[0])
 
                 //console.log(checkTime(startTime,endTime, day[this.group[n].times[i].day]));
+                //console.log(checkEventNameDuplicate(this.group[n].id.split(" -")[0] , this.group[n].number.trim()));
                 
-                if(checkTime(startTime,endTime, day[this.group[n].times[i].day]) && checkEventNameDuplicate(this.group[n].id.split("-")[0] +'- '+ this.group[n].number)){
+                if(checkEventNameDuplicate(this.group[n].id.split(" -")[0] , this.group[n].number.trim()) && checkTime(startTime,endTime, day[this.group[n].times[i].day])){
+                    var option = {
+                        class: color, 
+                        onClick: function(event, timetable, clickEvent) {
+                            this.deleteClass(event)
+                        }.bind(this)
+                    }
                     this.timetable.setScope(this.firstTime, this.lastTime);
-                    this.timetable.addEvent(this.group[n].id.split("-")[0] +'- '+ this.group[n].number, day[this.group[n].times[i].day], new Date(2018, 1, 1, startTime[0], startTime[1]), new Date(2018, 1, 1, endTime[0], endTime[1]));    
+                    this.timetable.addEvent(this.group[n].id.split("-")[0] +'- '+ this.group[n].number, day[this.group[n].times[i].day], new Date(2018, 1, 1, startTime[0], startTime[1]), new Date(2018, 1, 1, endTime[0], endTime[1]),option);    
 
                     check = true
                     //this.sumCredit += parseInt(this.info.credit.split(" ")[0])
@@ -78,11 +89,12 @@ var app = new Vue({
             function checkTime(startTime, endTime,loca) { //เช็คว่าเวลาไม่ทับกันถึงจะผ่าน => ถ้าไม่ทับ true, ถ้าทับ false
                 x = parseFloat(startTime[0]+'.'+startTime[1])
                 y = parseFloat(endTime[0]+'.'+endTime[1])
+                check = false
                 for (let i = 0; i < that.timetable.events.length; i++) {
                     a = parseFloat(that.timetable.events[i].startDate.getHours()+'.'+that.timetable.events[i].startDate.getMinutes())
                     b = parseFloat(that.timetable.events[i].endDate.getHours()+'.'+that.timetable.events[i].endDate.getMinutes())
                     if(that.timetable.events[i].location == loca){ //ถ้าเป็นวันเดียวกันค่อยเข้ามาเช็ค
-                        if((x >= a && x <= b) || (y >= a && x <= y)){
+                        if((x > a && x < b) || (y > a && y < b)){
                             Materialize.toast('ไม่สามารถเพิ่มได้ เนื่องจาก' + 'วันและเวลาซ้ำซ้อน',that.toastTime)
                             return false
                         }
@@ -90,15 +102,40 @@ var app = new Vue({
                 }
                 return true
             }
-            function checkEventNameDuplicate(name) {
+            function checkEventNameDuplicate(id,number) {
+                
                 for (let i = 0; i < that.timetable.events.length; i++) {
-                    if(name != that.timetable.events[i].name){
-                        Materialize.toast('ไม่สามารถเพิ่มได้ เนื่องจาก'+ 'รหัสวิชาซ้ำ',that.toastTime)
-                        return false
+                    if(id == that.timetable.events[i].name.split(' - ')[0]) {
+                        if(number != that.timetable.events[i].name.split(' - ')[1]){
+                            Materialize.toast('ไม่สามารถเพิ่มได้ เนื่องจาก'+ 'รหัสวิชาซ้ำ',that.toastTime)
+                            return false
+                        }
                     }
+
                 }
                 return true
             }
+        },
+        deleteClass: function(event){
+             var isConfirm = confirm('คุณต้องการจะลบ ' + event.name + ' ใช่หรือไม่')
+             //console.log(event);
+             
+             if(isConfirm){
+                var renderer = new Timetable.Renderer(this.timetable);
+                for (let i = 0; i < this.timetable.events.length; i++) {
+                    if(this.timetable.events[i].name == event.name){
+                        console.log(i);
+                        
+                        //this.timetable.events.splice(i ,1)
+                        
+                        //renderer.draw('.timetable');
+                    }
+                }
+                
+                
+                
+             }
+             
         },
         updateTerm: function(){
             this.term = $('#myselect').val()
@@ -106,14 +143,18 @@ var app = new Vue({
         getCourse: function(){
             this.updateTerm()
             this.btnClass = "progress"
-            var url = 'https://allorigins.me/get?&url=' + encodeURIComponent('http://reg.sut.ac.th/registrar/class_info_1.asp?coursestatus=reg&facultyid=all&maxrow=1000&Acadyear='+this.year+'&Semester='+this.term+'&CAMPUSID=1&LEVELID=1&coursecode='+this.coursecode+'&coursename=&cmd=2') + '&callback=?'
+            var url = 'http://127.0.0.1:1458/get?url=' + encodeURIComponent('http://reg.sut.ac.th/registrar/class_info_1.asp?coursestatus=reg&facultyid=all&maxrow=1000&Acadyear='+this.year+'&Semester='+this.term+'&CAMPUSID=1&LEVELID=1&coursecode='+this.coursecode+'&coursename=&cmd=2') + '&callback=?'
+            //var url = 'https://allorigins-chtzrnbsfj.now.sh/get?url=' + encodeURIComponent('http://reg.sut.ac.th/registrar/class_info_1.asp?coursestatus=reg&facultyid=all&maxrow=1000&Acadyear='+this.year+'&Semester='+this.term+'&CAMPUSID=1&LEVELID=1&coursecode='+this.coursecode+'&coursename=&cmd=2') + '&callback=?'
             //var url = 'http://allorigins.me/get?url=' + encodeURIComponent('http://reg.sut.ac.th/registrar/class_info_2.asp?backto=home&option=0&courseid='+this.courseid+'&coursecode='+this.coursecode+'&acadyear='+this.year+'&semester='+this.term+'&avs250426955=5') + '&callback=?'
             //console.log(url);
+            this.group = []
+            this.info.id = null
+            this.info.name = null
+            this.info.credit = null
             $.ajax({ 
                 url: url, 
                 dataType: 'json', 
                 success: function(data){ 
-                    this.group = []
                     var allgroup = data.contents.match(/(<TR VALIGN=TOP>)(.*?)(<.TR>)/gi)
                     //console.log(allgroup);
                     for (let i = 0; i < allgroup.length; i++) {
@@ -146,8 +187,9 @@ var app = new Vue({
                 }.bind(this)
             });
         },
-        modalsBtn: function(){
-
+        randomColor: function(){
+            color = ['red', 'pink', 'purple', 'deep-purple','indigo' ,'blue']
+            return color[Math.floor(Math.random() * (color.length-1))] +  ' lighten-1'
         }
     },
     computed: {

@@ -10,25 +10,17 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-    
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
     <link rel="stylesheet" href="css/timetablejs.css">
+    <link rel="stylesheet" href="css/mytimetable.css">
 
 </head>
 
 <body>
     <div id="app">
-        <div class="navbar-fixed ">
-            <nav class="light-blue">
-                <div class="nav-wapper ">
-                    <a href="#" class="brand-logo center">SUT-TABLE</a>
-                    <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                </div>
-            </nav>
-        </div>
-        
-        
+
         <div id="modal1" class="modal">
             <div v-bind:class="btnClass">
                 <div class="indeterminate"></div>
@@ -43,7 +35,7 @@
                                 <label>ปีการศึกษา</label>
                             </div>
                             <div class="input-field col s2">
-                                <select  id='myselect'>
+                                <select id='myselect'>
                                     <option value='1'>1</option>
                                     <option value='2'>2</option>
                                     <option value='3'>3</option>
@@ -55,7 +47,9 @@
                                 <label>รหัสวิชา</label>
                             </div>
                             <div class="col s2">
-                                <a class="waves-effect waves-light btn-small" @click="getCourse"><i class="small material-icons">search</i></a>
+                                <a class="waves-effect waves-light btn-small" @click="getCourse">
+                                    <i class="small material-icons">search</i>
+                                </a>
                             </div>
                         </div>
                     </form>
@@ -63,62 +57,57 @@
                 </div>
                 <div class="row">
                     <div class="row s12">
-                            ทั้งหมด {{group.length}} กลุ่ม <br>
-                            รหัสวิชา : {{info.id}} <br>
-                            หน่วยกิต : {{info.credit}} <br>
-                            ชื่อวิชา : {{info.name}} <br>
+                        ทั้งหมด {{group.length}} กลุ่ม
+                        <br> รหัสวิชา : {{info.id}}
+                        <br> หน่วยกิต : {{info.credit}}
+                        <br> ชื่อวิชา : {{info.name}}
+                        <br>
                         <ul class="collection">
-                            
                             <li class="collection-item" v-for="i in group">
-                                    กลุ่ม : {{i.number}} <br>
-                                    <ul>
-                                        เวลา : 
-                                        <div v-for="j in i.times">
-                                            {{ j.day }} {{j.time}} {{j.room}}
-                                        </div>
-                                    </ul>
-                                    <a class="waves-effect waves-light btn" @click="addClass(i.number)">Add</a>
+                                กลุ่ม : {{i.number}}
+                                <ul>
+                                    เวลา :
+                                    <div v-for="j in i.times">
+                                        {{ j.day }} {{j.time}} {{j.room}}
+                                    </div>
+                                </ul>
+                                <a class="waves-effect waves-light btn" @click="addClass(i.number)">Add</a>
                             </li>
-                            <br>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
 
-    <div class="row">
-        <div class="col l2"></div>
-        <div class="col l8 s12">
+        <div class="container">
             <div class="timetable"></div>
-        </div>
-        <div class="col l2"></div>
-    </div>
-    <div class="row">
-        <h5 class="col l3  offset-l9">หน่วยกิตรวม : {{ sumCredit }}</h5>
-    </div>
-    
-    <div class="fixed-action-btn">
-        <a id='add' class="waves-effect waves-light btn-floating btn-large red modal-trigger"  href="#modal1">
-            <i class="large material-icons">add</i>
-        </a>
-    </div>
 
 
-    <div class="tap-target" data-activates="add">
-        <div class="tap-target-content">
-        <h5>เพิ่มรายวิชา</h5>
-        <p>คุณสามารถเพิ่มวิชาได้ที่นี้</p>
+
+            <div class="row">
+                <h5 class="col l3  offset-l9">หน่วยกิตรวม : {{ sumCredit }}</h5>
+            </div>
+
+            <div class="fixed-action-btn">
+                <a id='add' class="waves-effect waves-light btn-floating btn-large red modal-trigger" href="#modal1">
+                    <i class="large material-icons">add</i>
+                </a>
+            </div>
+
+
+            <div class="tap-target" data-activates="add">
+                <div class="tap-target-content">
+                    <h5>เพิ่มรายวิชา</h5>
+                    <p>คุณสามารถเพิ่มวิชาได้ที่นี้</p>
+                </div>
+            </div>
         </div>
-    </div>
-            
-        
+
+
     </div>
     <script src="js/timetable.js"></script>
     <script src="js/app.js"></script>
-    <script>
-        //var timetable = new Timetable();
 
-    </script>
 
 </body>
 
